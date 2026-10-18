@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نقشه راه ۷۳ هفته‌ای — من کجای برنامه‌ام؟</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f6;--card:#fff;--ink:#16202e;--muted:#5a6679;--accent:#0b6e6e;--soft:#dcefee;--line:#d9dfe9;--tick:#c5ced9;--now:#d4472a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e141c;--card:#161e29;--ink:#e6ebf3;--muted:#98a4b8;--accent:#4fc1bd;--soft:#16302f;--line:#263143;--tick:#2c3748;--now:#ff7a59;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e141c;--card:#161e29;--ink:#e6ebf3;--muted:#98a4b8;--accent:#4fc1bd;--soft:#16302f;--line:#263143;--tick:#2c3748;--now:#ff7a59;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Vazirmatn,Tahoma,"Segoe UI",sans-serif;line-height:1.9}
+main{max-width:640px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:1.35rem;font-weight:800;margin:0 0 4px}
+.sub{color:var(--muted);font-size:.9rem;margin:0 0 20px}
+.inputs{display:flex;flex-wrap:wrap;gap:10px;align-items:end;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+label{display:flex;flex-direction:column;font-size:.8rem;color:var(--muted);gap:2px}
+input,select,button{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px;min-height:40px}
+input{width:76px;text-align:center}
+button{cursor:pointer;background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hint{font-size:.78rem;color:var(--muted);margin:8px 2px 0}
+#out{margin-top:20px}
+.msg{background:var(--card);border:1px dashed var(--line);border-radius:10px;padding:16px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-inline-start:5px solid var(--accent);border-radius:10px;padding:18px}
+.when{font-size:.85rem;color:var(--muted)}
+.wk{font-size:2.4rem;font-weight:800;line-height:1.2;margin:4px 0 0}
+.wk small{font-size:1rem;font-weight:400;color:var(--muted)}
+.range{font-size:.9rem;color:var(--muted)}
+.phase{display:inline-block;margin-top:10px;background:var(--soft);color:var(--accent);border-radius:99px;padding:0 12px;font-size:.82rem;font-weight:600}
+h2{font-size:1.15rem;margin:12px 0 6px}
+.note{margin:0;font-size:.95rem}
+.next{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:.9rem;color:var(--muted)}
+.next b{color:var(--ink)}
+.ticks{display:flex;gap:1px;align-items:flex-end;height:26px;margin-top:16px;direction:rtl}
+.ticks i{flex:1;height:12px;background:var(--tick);border-radius:1px}
+.ticks i.p{background:var(--accent)}
+.ticks i.n{background:var(--now);height:26px}
+.pct{font-size:.8rem;color:var(--muted);margin-top:4px}
+details{margin-top:24px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px}
+summary{cursor:pointer;font-weight:600}
+ol{list-style:none;margin:10px 0 0;padding:0}
+li{padding:4px 8px;border-radius:6px;font-size:.9rem}
+li span{color:var(--muted);font-size:.78rem;margin-inline-start:6px}
+li.cur{background:var(--soft);font-weight:600}
+li.ph{margin-top:10px;color:var(--accent);font-weight:800;font-size:.82rem}
+</style>
+</head>
+<body>
+<main>
+<h1>نقشه راه ۷۳ هفته‌ای</h1>
+<p class="sub">شروع برنامه: شنبه ۳۱ مرداد ۱۴۰۵ — هر هفته از شنبه تا جمعه</p>
+
+<div id="out"></div>
+
+<details>
+<summary>فهرست کامل هفته‌ها</summary>
+<ol id="all"></ol>
+</details>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const fa=s=>String(s).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+const en=s=>s.replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+const MN=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+const WD=['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه'];
+const CUM=[0,31,62,93,124,155,186,216,246,276,306,336];
+const LEN=[31,31,31,31,31,31,30,30,30,30,30,29];
+const START=155, N=73;
+
+const W=[null,
+['Git/VCS + محیط توسعه + پروفایل GitHub','مفاهیم Git را از قبل بلدی. یک ریپازیتوری برای تمرین‌های پایتون بساز و از همین هفته commit کن.'],
+['فصل ۱ و ۲ دوره پایتون: انواع داده، ساختار داده، عملگرها','int, str, bool, list, tuple, dict, set و همچنین float و None. float برای embeddings و احتمالات در مسیر AI مهم است.'],
+['فصل ۳ و ۴: شرطی، حلقه‌ها، توابع','این هفته فصل ۴ هم پوشش داده شد و یک هفته جلوتر افتادی.'],
+['فصل ۵: برنامه‌نویسی شی‌گرا (فقط مبانی)','class، object، __init__، attribute، method، self. مباحث پیشرفته (Inheritance، Composition، Magic Methods) عمداً به هفته ۵۳ موکول شده. معیار کفایت: بدون نگاه به مثال بتوانی یک class ساده با چند attribute و method بنویسی و ازش چند object بسازی. دوره فقط ۵ ساعت OOP دارد، پس تمرین اضافه کن.'],
+['فصل ۶ و ۷: ماژول‌ها و پکیج‌ها، Error Handling',''],
+['فصل ۸: دکوراتورها','مبحث مفهومی و سنگین است؛ یک هفته کامل برایش در نظر گرفته شده.'],
+['فصل ۹: جنریتورها','مثل دکوراتورها نیاز به هضم جدا دارد.'],
+['فصل ۱۰ و ۱۳: ماژول‌های پیشرفته (regex)، فایل‌های دیتا','regex را حتماً یاد بگیر: در پاکسازی متن برای Chunking در RAG، استخراج الگو از خروجی API و اعتبارسنجی خروجی مدل کاربرد دارد. سطح کافی: \\d و \\w و + و * و ؟، گروه‌بندی ساده، re.search و re.findall و re.sub.'],
+['فصل ۱۱ و ۱۲: وب‌اسکریپینگ، کار با عکس','کاربرد مستقیم کمی برای مسیر AI Engineering دارند. در حد آشنایی با مفاهیم پایه جلو برو (خواندن یک صفحه وب، باز و ذخیره کردن تصویر با Pillow) و عمق نده.'],
+['فصل ۱۴ و ۱۵: ماژول‌های وب، ساختار داده پیشرفته','ببین فصل ۱۴ مفاهیم REST (متدها، هدرها، کد وضعیت) را واقعاً پوشش می‌دهد یا نه. اگر نه، در هفته ۲۱ جبران می‌شود.'],
+['فصل ۱۶: پروژه پایانی (بخش اول)',''],
+['فصل ۱۶: پروژه پایانی (بخش دوم)','پایان فاز پایتون ✅'],
+['احتمال: مفاهیم پایه','فاز ۲ فقط به اندازه‌ای مفاهیم ML را پوشش می‌دهد که بفهمی یک LLM چطور کار می‌کند. ML کلاسیک عمداً در برنامه نیست (مربوط به لایه ۴ است).'],
+['آمار: مفاهیم پایه',''],
+['بردارها و فضای برداری','پیش‌نیاز مستقیم فهم Embeddings در هفته ۴۶.'],
+['Cosine Similarity',''],
+['Loss Function و Optimization','در حد شهودی؛ نیازی به پیاده‌سازی نیست.'],
+['معماری Transformer: مقدمه',''],
+['Attention و Tokenization',''],
+['Context Window + مرور فاز ۲','پایان فاز ۲.'],
+['JSON + REST API + async/await','این هفته عمداً درست قبل از فاز ۳ گذاشته شده تا تازه یاد گرفته باشی و فراموش نشود (دوره پایتون این‌ها را کامل پوشش نمی‌دهد). async/await برای کار حرفه‌ای با APIهای LLM ضروری است.'],
+['تفاوت مدل‌های base/instruct و open/closed',''],
+['کار عملی با Anthropic API','SDKها بر پایه OOP هستند: client یک object و messages.create یک method است.'],
+['کار عملی با OpenAI API',''],
+['مدیریت Token',''],
+['مدیریت Context Window در عمل',''],
+['Streaming Responses',''],
+['Error Handling و Rate Limiting',''],
+['پروژه چت‌بات: بخش اول',''],
+['پروژه چت‌بات: بخش دوم',''],
+['تکمیل پروژه + افزودن به رزومه','اولین پروژه رزومه‌ای. یک README حرفه‌ای بنویس: مشکل، راه‌حل، تکنولوژی.'],
+['Prompt Engineering: Few-shot و Zero-shot',''],
+['Prompt Engineering: Chain-of-Thought',''],
+['طراحی System Prompt',''],
+['Structured Output / JSON Mode',''],
+['Function Calling: مفاهیم پایه','Tool Use پل مستقیم به لایه سوم است.'],
+['Function Calling / Tool Use: پیشرفته',''],
+['پروژه Agent با Tool Use: بخش اول','دومین پروژه رزومه‌ای.'],
+['پروژه Agent با Tool Use: بخش دوم',''],
+['پروژه Agent با Tool Use: بخش سوم',''],
+['نگارش نسخه اول رزومه رسمی','به فرمت استاندارد بین‌المللی، نه فارسی.'],
+['شروع شبکه‌سازی فعال در LinkedIn','به ۵ تا ۱۰ نفر از متخصصان پیام بده (Informational Interview).'],
+['رویداد/میت‌آپ + جمع‌بندی نهایی لایه دوم','تکمیل ۱۰۰٪ لایه دوم ✅'],
+['بازنویسی رزومه + تحقیق مسیرهای مهاجرت کاری','در مسائل حقوقی مهاجرت (نوع ویزا، شرایط کشور مقصد) از منابع رسمی یا وکیل مهاجرت کمک بگیر. افزودن ۲ تا ۳ گواهی‌نامه هدفمند (Cloud ML یا DeepLearning.AI) پیشنهاد شده ولی هنوز به برنامه اضافه نشده.'],
+['پورتفولیو آنلاین + شروع اپلای Entry-level','حتی اگر هدف نهایی نباشد، تجربه مصاحبه ارزشمند است.'],
+['Embeddings: مفاهیم',''],
+['Similarity Search عملی',''],
+['Vector Databases: Chroma',''],
+['Vector Databases: Pinecone/Weaviate',''],
+['RAG: معماری و مفاهیم',''],
+['پیاده‌سازی RAG: بخش اول',''],
+['پیاده‌سازی RAG: بخش دوم',''],
+['تعمیق OOP: Inheritance، Composition، Magic Methods','درست قبل از LangChain گذاشته شده تا همان موقعی که لازم می‌شود یاد بگیری.'],
+['Chunking Strategies','جایی که regex هفته ۸ به کارت می‌آید.'],
+['LangChain: مفاهیم پایه',''],
+['LangChain: Agentها',''],
+['LlamaIndex: مقدمه',''],
+['پروژه پرچمدار RAG: بخش اول','سنگین‌ترین وزن را در رزومه دارد.'],
+['پروژه پرچمدار RAG: بخش دوم',''],
+['پروژه پرچمدار RAG: بخش سوم',''],
+['مستندسازی پروژه به‌صورت Case Study',''],
+['به‌روزرسانی رزومه با پروژه پرچمدار',''],
+['پیگیری شبکه‌سازی + شروع اپلای رسمی',''],
+['Docker: مفاهیم پایه','اگر دوره ۱۷ ساعته ترمینال را داری، بخش پیشرفته‌اش اینجا به کار می‌آید.'],
+['Docker: Containerization عملی',''],
+['Docker Compose و چند-کانتینری',''],
+['Fine-tuning: مفاهیم','تفاوتش را با Prompt Engineering و RAG بفهم.'],
+['LoRA/PEFT: مفاهیم',''],
+['روش‌های Evaluation مدل‌های زبانی',''],
+['Benchmarking عملی',''],
+['مرور و تثبیت فاز ۶',''],
+['پروژه نهایی پل ارتباطی به لایه سوم',''],
+['ارزیابی آمادگی برای ورود به لایه سوم','پایان برنامه 🎯 آمادگی ورود به MLOps و زیرساخت.']
+];
+const phase=w=>w<=12?'فاز پایتون':w<=20?'فاز ۲: مبانی مفهومی AI':w==21?'پل به فاز ۳':w<=31?'فاز ۳: کار حرفه‌ای با APIها':w<=43?'فاز ۴: Prompt Engineering و Tool Use':w<=45?'رزومه و مهاجرت':w<=63?'فاز ۵: RAG و ارکستراسیون':'فاز ۶: پل به لایه سوم';
+
+const absd=(y,m,d)=>(y-1405)*365+CUM[m-1]+d;
+function fromAbs(a){const y=1405+Math.floor((a-1)/365),r=a-(y-1405)*365;let m=11;while(CUM[m]>=r)m--;return{y,m:m+1,d:r-CUM[m]};}
+const fmt=(o,withY)=>fa(o.d)+' '+MN[o.m-1]+(withY?' '+fa(o.y):'');
+const range=w=>{const s=fromAbs(START+(w-1)*7),e=fromAbs(START+(w-1)*7+6);return fmt(s)+' تا '+fmt(e,true);};
+
+
+function msg(t){$('out').innerHTML='<div class="msg"></div>';$('out').firstChild.textContent=t;}
+
+function show(d,m,y){
+  const off=absd(y,m,d)-START;
+  if(off<0){msg('برنامه هنوز شروع نشده است. شروع: شنبه ۳۱ مرداد ۱۴۰۵.');mark(0);return;}
+  const w=Math.floor(off/7)+1;
+  if(w>N){msg('این تاریخ بعد از پایان برنامه است. هفته ۷۳ در جمعه ۲۴ دی ۱۴۰۶ تمام می‌شود.');mark(N+1);return;}
+  const [t,note]=W[w],nx=W[w+1];
+  let h='<div class="card"><div class="when">'+WD[off%7]+' '+fmt({d,m,y},true)+' — روز '+fa(off%7+1)+' از ۷ این هفته</div>'+
+   '<div class="wk">هفته '+fa(w)+' <small>از '+fa(N)+'</small></div><div class="range">'+range(w)+'</div>'+
+   '<span class="phase">'+phase(w)+'</span><h2></h2><p class="note"></p>';
+  if(nx)h+='<div class="next">هفته بعد (هفته '+fa(w+1)+'، '+range(w+1)+'): <b class="nt"></b></div>';
+  else h+='<div class="next">این آخرین هفته برنامه است.</div>';
+  h+='<div class="ticks" id="ticks"></div><div class="pct">'+fa(Math.round(w/N*100))+'٪ از مسیر</div></div>';
+  $('out').innerHTML=h;
+  $('out').querySelector('h2').textContent=t;
+  $('out').querySelector('.note').textContent=note;
+  if(nx)$('out').querySelector('.nt').textContent=nx[0];
+  const tk=$('ticks');for(let i=1;i<=N;i++){const e=document.createElement('i');if(i<w)e.className='p';else if(i==w)e.className='n';tk.appendChild(e);}
+  mark(w);
+}
+function mark(w){document.querySelectorAll('#all li').forEach(li=>li.classList.toggle('cur',+li.dataset.w===w));}
+
+const all=$('all'),heads={1:'فاز پایتون',13:'فاز ۲: مبانی مفهومی AI',21:'پل به فاز ۳',22:'فاز ۳: کار حرفه‌ای با APIها',32:'فاز ۴: Prompt Engineering و Tool Use',44:'رزومه و مهاجرت',46:'فاز ۵: RAG و ارکستراسیون',64:'فاز ۶: پل به لایه سوم'};
+for(let w=1;w<=N;w++){
+  if(heads[w]){const p=document.createElement('li');p.className='ph';p.textContent=heads[w];all.appendChild(p);}
+  const li=document.createElement('li');li.dataset.w=w;
+  li.textContent='هفته '+fa(w)+': '+W[w][0];
+  const s=document.createElement('span');s.textContent=range(w);li.appendChild(s);all.appendChild(li);
+}
+
+function fillToday(){
+  try{
+    const p=new Intl.DateTimeFormat('en-u-ca-persian',{day:'numeric',month:'numeric',year:'numeric'}).formatToParts(new Date());
+    const g=t=>{const x=p.find(q=>q.type===t);return x?x.value:null;};
+    const d=g('day'),m=+g('month'),y=+(g('year')||g('relatedYear'));
+    if(!d||!m||!y)throw new Error('no date');
+    if(y&&y<1405){msg('برنامه هنوز شروع نشده است. شروع: شنبه ۳۱ مرداد ۱۴۰۵.');mark(0);return;}
+    if(y&&y>1406){msg('این تاریخ بعد از پایان برنامه است. هفته ۷۳ در جمعه ۲۴ دی ۱۴۰۶ تمام می‌شود.');mark(N+1);return;}
+    show(+d,m,y);
+  }catch(e){msg('تاریخ امروز از ساعت دستگاه خوانده نشد.');}
+}
+fillToday();
+</script>
+</body>
+</html>
